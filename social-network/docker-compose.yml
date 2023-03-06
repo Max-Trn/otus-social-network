@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  social-network:
+    driver: bridge
+
+services:
+  social-network:
+    image: social_network
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7285:7285"
+    depends_on: 
+      - "postgres_image"
+    environment:
+      DB_CONNECTION_STRING: "host:postgres_image; port:5432;database=socialnetwork"
+    networks:
+      - social-network
+
+  postgres_image:
+    image: postgres
+    ports:
+      - "5432"
+    restart: always
+    volumes:
+      - ./dbscripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "socialnetwork"
+    networks: 
+      - social-network
+volumes:
+  db_volume:
