@@ -1,1 +1,0 @@
-http://localhost:7285/swagger/index.html

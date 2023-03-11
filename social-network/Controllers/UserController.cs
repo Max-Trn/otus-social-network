@@ -1,35 +1,44 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using social_network.Exceptions;
 using social_network.Models.Requests;
 using social_network.Services.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace social_network.Controllers;
 
+[Authorize]
 [Route("user")]
 public class UserController : Controller
 {
     private readonly IUserService _userService;
-    
+
     public UserController(IUserService userService)
     {
         _userService = userService;
     }
-    
-    [HttpGet("get")]
+
+    [SwaggerOperation(Summary = "Получение анкеты пользователя")]
+    [HttpGet("get/{userId}")]
     public async Task<IActionResult> Get(int userId)
     {
-        try
+        var user = await _userService.Get(userId);
+        if (user is null)
         {
-            var user = await _userService.Get(userId);
-            return Ok(user);
+            return NotFound("Пользователь не найден");
         }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+
+        return Ok(user);
     }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns>ID нового пользователя</returns>
+    [SwaggerOperation(Summary = "Регистрация нового пользователя")]
+    [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> Register(UserRegisterRequest model)
+    public async Task<IActionResult> Register([FromBody]UserRegisterRequest model)
     {
         try
         {
@@ -40,6 +49,32 @@ public class UserController : Controller
         {
             return BadRequest(e.Message);
         }
+    }
 
+    /// <summary>
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns>Token</returns>
+    [AllowAnonymous]
+    [SwaggerOperation(Summary = "Упрощенный процесс аутентификации путем передачи идентификатор пользователя и получения токена для дальнейшего прохождения авторизации",
+        Description = "Возвращает Token")]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserAuthenticateRequest model)
+    {
+        try
+        {
+            var user = await _userService.Authenticate(model.UserId, model.Password);
+            var token = _userService.GetUserToken(user);
+
+            return Ok(token);
+        }
+        catch (UserNotFoundException e)
+        {
+            return NotFound("Пользователь не найден");
+        }
+        catch (InputDataIncorrect e)
+        {
+            return BadRequest("Невалидные данные");
+        }
     }
 }

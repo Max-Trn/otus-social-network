@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "57bde06b-15d1-4326-b07e-e76bc2de5b82",
+		"name": "SocialNetwork",
+		"description": "Social Network",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26300213"
+	},
+	"item": [
+		{
+			"name": "user/register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"userId\", responseBody);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Alex\",\r\n  \"secondName\": \"Bolgarin\",\r\n  \"age\": 23,\r\n  \"biography\": \"TheBestDescription\",\r\n  \"city\": \"Moscow\",\r\n  \"password\": \"SomeSecurePassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7285/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7285",
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"postman.setEnvironmentVariable(\"token\", responseBody);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"password\": \"SomeSecurePassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7285/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7285",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/get",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7285/user/get/{{userId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7285",
+					"path": [
+						"user",
+						"get",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

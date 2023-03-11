@@ -7,4 +7,6 @@ public interface IUserService
 {
     Task<UserModel> Get(int id);
     Task<int> Register(UserRegisterRequest model);
+    Task<UserModel> Authenticate(int userId, string password);
+    string GetUserToken(UserModel user);
 }

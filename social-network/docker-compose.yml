@@ -15,14 +15,14 @@ services:
     depends_on: 
       - "postgres_image"
     environment:
-      DB_CONNECTION_STRING: "host:postgres_image; port:5432;database=socialnetwork"
+      ASPNETCORE_ENVIRONMENT: "Release"
     networks:
       - social-network
 
   postgres_image:
     image: postgres
     ports:
-      - "5432"
+      - "5432:5432"
     restart: always
     volumes:
       - ./dbscripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
