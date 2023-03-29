@@ -28,6 +28,11 @@ public class UserService: IUserService
         return await _userRepository.Get(id);
     }
 
+    public async Task<UserModel[]> Search(UsersSearchRequest model)
+    {
+        return await _userRepository.Search(model);
+    }
+
     public async Task<int> Register(UserRegisterRequest model)
     {
         var hashedPassword = new PasswordHasher<object?>().HashPassword(null, model.Password);

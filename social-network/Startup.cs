@@ -71,8 +71,8 @@ public class Startup
                 }
             });
         });
-        services.AddSingleton<IUserService, UserService>();
-        services.AddSingleton<UserRepository>();
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<UserRepository>();
         
         var config = GetConfiguration();
         services.AddSingleton(config);

@@ -77,4 +77,25 @@ public class UserController : Controller
             return BadRequest("Невалидные данные");
         }
     }
+    
+    /// <summary>
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns>Token</returns>
+    [SwaggerOperation(Summary = "Запрос поиска пользователей по части имени и фамилии",
+        Description = "Возвращает список пользователей")]
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] UsersSearchRequest model)
+    {
+        try
+        { 
+            var users = await _userService.Search(model);
+
+            return Ok(users);
+        }
+        catch (InputDataIncorrect e)
+        {
+            return BadRequest("Невалидные данные");
+        }
+    }
 }
