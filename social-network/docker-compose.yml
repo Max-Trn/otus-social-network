@@ -26,11 +26,38 @@ services:
     restart: always
     volumes:
       - ./dbscripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+      - ./dbVolumes/master:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: "user"
+      POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
       POSTGRES_DB: "socialnetwork"
     networks: 
+      - social-network
+  postgres_image_repl:
+    image: postgres
+    ports:
+      - "5433:5433"
+    restart: always
+    volumes:
+      - ./dbVolumes/pgslave:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "socialnetwork"
+    networks:
+      - social-network
+  postgres_image_repl2:
+    image: postgres
+    ports:
+      - "5434:5434"
+    restart: always
+    volumes:
+      - ./dbVolumes/pgslave2:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "socialnetwork"
+    networks:
       - social-network
 volumes:
   db_volume:

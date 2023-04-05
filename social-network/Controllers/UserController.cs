@@ -72,7 +72,7 @@ public class UserController : Controller
         {
             return NotFound("Пользователь не найден");
         }
-        catch (InputDataIncorrect e)
+        catch (Exception e)
         {
             return BadRequest("Невалидные данные");
         }

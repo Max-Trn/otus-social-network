@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using Npgsql;
+using social_network.DAL.Infrastructure;
 using social_network.DAL.Models;
 using social_network.Models.Requests;
 
@@ -8,12 +9,12 @@ namespace social_network.DAL.Repositories;
 
 public class UserRepository
 {
-    private readonly IDbConnection _dbConnection;
+    private readonly ConnectionFactory _connectionFactory;
 
-    public UserRepository(IDbConnection dbConnection)
+    public UserRepository(ConnectionFactory connectionFactory)
     {
+        _connectionFactory = connectionFactory;
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-        _dbConnection = dbConnection;
     }
     
     public async Task<UserModel> Get(int id)
@@ -21,7 +22,7 @@ public class UserRepository
         string commandText = $"SELECT * FROM users WHERE ID = @id";
 
         var queryArgs = new { Id = id };
-        var user = await _dbConnection.QueryFirstOrDefaultAsync<UserModel>(commandText, queryArgs);
+        var user = await _connectionFactory.ReplicaConnection.QueryFirstOrDefaultAsync<UserModel>(commandText, queryArgs);
         return user;
     }
     
@@ -30,13 +31,13 @@ public class UserRepository
         var commandText = "insert into users (biography, password, city, first_name, second_name, age)" +
                                 "values (@biography, @password, @city, @firstName, @secondName, @age) returning id";
 
-        return await _dbConnection.QuerySingleAsync<int>(commandText, userModel);
+        return await _connectionFactory.MasterConnection.QuerySingleAsync<int>(commandText, userModel);
     }
 
     public async Task<UserModel[]> Search(UsersSearchRequest model)
     {
         string commandText = $"SELECT * FROM users WHERE first_name like @firstName||'%' and second_name like @lastName||'%' order by id";
-        var users = await _dbConnection.QueryAsync<UserModel>(commandText, model);
+        var users = await _connectionFactory.ReplicaConnection.QueryAsync<UserModel>(commandText, model);
         return users.ToArray();
     }
 }

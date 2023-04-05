@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using social_network.Configuration;
+using social_network.DAL.Infrastructure;
 using social_network.DAL.Repositories;
 using social_network.Services;
 using social_network.Services.Interfaces;
@@ -98,7 +99,7 @@ public class Startup
         });
         services.AddAuthorization();
 
-        services.AddTransient<IDbConnection>((sp) => new NpgsqlConnection(config.ConnectionString));
+        services.AddTransient<ConnectionFactory>((sp) => new ConnectionFactory(config));
 
         services.AddMvc();
     }
@@ -113,10 +114,12 @@ public class Startup
         
         var applicationKey = myConfig.GetValue<string>("Application:ApplicationKey");
         var connectionString = myConfig.GetValue<string>("Application:ConnectionString");
+        var connectionStringReplica = myConfig.GetValue<string>("Application:ConnectionStringReplica");
 
         return new ApplicationConfiguration()
         {
             ConnectionString = connectionString,
+            ConnectionStringReplica = connectionStringReplica,
             ApplicationKey = applicationKey
         };
     }
