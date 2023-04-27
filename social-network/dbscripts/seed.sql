@@ -17,5 +17,5 @@ CREATE TABLE friend (
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
   user_id integer,
-  text VARCHAR (1000) NOT NULL,
+  text VARCHAR (1000) NOT NULL
 );
