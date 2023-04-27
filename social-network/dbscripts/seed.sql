@@ -7,3 +7,15 @@ CREATE TABLE users (
  second_name VARCHAR (50) NOT NULL,
  age integer NOT NULL
 );
+
+CREATE TABLE friend (
+  id SERIAL PRIMARY KEY,
+  user_id integer,
+  friend_id integer
+);
+
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  user_id integer,
+  text VARCHAR (1000) NOT NULL,
+);

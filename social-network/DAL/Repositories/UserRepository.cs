@@ -22,7 +22,7 @@ public class UserRepository
         string commandText = $"SELECT * FROM users WHERE ID = @id";
 
         var queryArgs = new { Id = id };
-        var user = await _connectionFactory.ReplicaConnection.QueryFirstOrDefaultAsync<UserModel>(commandText, queryArgs);
+        var user = await _connectionFactory.MasterConnection.QueryFirstOrDefaultAsync<UserModel>(commandText, queryArgs);
         return user;
     }
     

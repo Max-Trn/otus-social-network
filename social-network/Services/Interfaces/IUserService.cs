@@ -10,4 +10,7 @@ public interface IUserService
     Task<int> Register(UserRegisterRequest model);
     Task<UserModel> Authenticate(int userId, string password);
     string GetUserToken(UserModel user);
+    int GetCurrentUserId();
+    Task AddFriend(int friendId);
+    Task DeleteFriend(int friendId);
 }

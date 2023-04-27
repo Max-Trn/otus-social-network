@@ -1,19 +1,16 @@
-using System.Data;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Npgsql;
 using social_network.Configuration;
 using social_network.DAL.Infrastructure;
 using social_network.DAL.Repositories;
 using social_network.Services;
 using social_network.Services.Interfaces;
-using IHostingEnvironment = Microsoft.Extensions.Hosting.IHostingEnvironment;
 
 namespace social_network;
 
-public class Startup 
+public class Startup
 {
     public IConfigurationRoot Configuration { get; set; }
 
@@ -44,6 +41,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+        services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(option =>
         {
@@ -74,6 +72,10 @@ public class Startup
         });
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<UserRepository>();
+        services.AddTransient<IPostService, PostService>();
+        services.AddTransient<PostRepository>();
+        services.AddTransient<FriendRepository>();
+
         
         var config = GetConfiguration();
         services.AddSingleton(config);

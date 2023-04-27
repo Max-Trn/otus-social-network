@@ -15,12 +15,20 @@ namespace social_network.Services;
 public class UserService: IUserService
 {
     private readonly UserRepository _userRepository;
+    private readonly FriendRepository _friendRepository;
     private readonly ApplicationConfiguration _configuration;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     
-    public UserService(UserRepository userRepository, ApplicationConfiguration configuration)
+    public UserService(
+        UserRepository userRepository,
+        FriendRepository friendRepository,
+        ApplicationConfiguration configuration,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userRepository = userRepository;
         _configuration = configuration;
+        _httpContextAccessor = httpContextAccessor;
+        _friendRepository = friendRepository;
     }
     
     public async Task<UserModel> Get(int id)
@@ -73,7 +81,7 @@ public class UserService: IUserService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim("Id", Guid.NewGuid().ToString()),
+                new Claim("Id", user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti,
                     Guid.NewGuid().ToString())
@@ -89,6 +97,25 @@ public class UserService: IUserService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = tokenHandler.WriteToken(token);
         return jwtToken;
+    }
+
+    public async Task AddFriend(int friendId)
+    {
+        var currentUserId = GetCurrentUserId();
+        await _friendRepository.Add(currentUserId, friendId);
+    }
+    
+    public async Task DeleteFriend(int friendId)
+    {
+        var currentUserId = GetCurrentUserId();
+        await _friendRepository.Delete(currentUserId, friendId);
+    }
+
+
+    public int GetCurrentUserId()
+    { 
+        var id = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        return int.Parse(id);
     }
 
     private bool IsPasswordCorrect(string hashedPassword, string password)
@@ -107,4 +134,5 @@ public class UserService: IUserService
                 throw new ArgumentOutOfRangeException();
         }
     }
+    
 }
