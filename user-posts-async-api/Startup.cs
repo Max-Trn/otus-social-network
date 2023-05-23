@@ -1,14 +1,19 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using social_network.Configuration;
-using social_network.DAL.Infrastructure;
-using social_network.DAL.Repositories;
-using social_network.Services;
-using social_network.Services.Interfaces;
+using RabbitMQ.Client;
+using user_posts_async_api.Configuration;
+using user_posts_async_api.Services;
+using user_posts_async_api.Services.Infrastructure;
+using user_posts_async_api.Services.Interfaces;
 
-namespace social_network;
+namespace user_posts_async_api;
 
 public class Startup
 {
@@ -71,12 +76,7 @@ public class Startup
                 }
             });
         });
-        services.AddTransient<IUserService, UserService>();
-        services.AddTransient<UserRepository>();
-        services.AddTransient<IPostService, PostService>();
-        services.AddTransient<PostRepository>();
-        services.AddTransient<FriendRepository>();
-        services.AddSingleton<IMessageService, MessageService>();
+
         
         var config = GetConfiguration();
         services.AddSingleton(config);
@@ -101,28 +101,25 @@ public class Startup
             };
         });
         services.AddAuthorization();
-
-        services.AddTransient<ConnectionFactory>((sp) => new ConnectionFactory(config));
-
         services.AddMvc();
+        
+        services.AddTransient<IUserService, UserService>();
+        services.AddSingleton<PostConsumer>();
+        services.AddHostedService<PostConsumer>(provider => provider.GetService<PostConsumer>());
+        services.AddSingleton<PostWebSocketService>();
     }
 
     private ApplicationConfiguration GetConfiguration()
     {   
         var myConfig = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
         
         var applicationKey = myConfig.GetValue<string>("Application:ApplicationKey");
-        var connectionString = myConfig.GetValue<string>("Application:ConnectionString");
-        var connectionStringReplica = myConfig.GetValue<string>("Application:ConnectionStringReplica");
 
         return new ApplicationConfiguration()
         {
-            ConnectionString = connectionString,
-            ConnectionStringReplica = connectionStringReplica,
             ApplicationKey = applicationKey
         };
     }

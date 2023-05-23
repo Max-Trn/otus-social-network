@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using social_network.DAL.Models;
 using social_network.DAL.Repositories;
@@ -10,12 +11,17 @@ public class PostService : IPostService
     private readonly PostRepository _postRepository;
     private readonly FriendRepository _friendRepository;
     private readonly IMemoryCache _memoryCache;
+    private readonly IMessageService _messageService;
     
-    public PostService(PostRepository postRepository, IMemoryCache memoryCache, FriendRepository friendRepository)
+    public PostService(PostRepository postRepository,
+        IMemoryCache memoryCache,
+        FriendRepository friendRepository,
+        IMessageService messageService)
     {
         _postRepository = postRepository;
         _memoryCache = memoryCache;
         _friendRepository = friendRepository;
+        _messageService = messageService;
     }
     
     
@@ -26,6 +32,13 @@ public class PostService : IPostService
             UserId = userId,
             Text = text
         };
+        
+        var friends = await _friendRepository.GetFriendsByUserId(userId);
+        foreach (var friendId in friends)
+        {
+            _messageService.Enqueue(JsonSerializer.Serialize(model), friendId);
+        }
+        
         return await _postRepository.Add(model);
     }
 

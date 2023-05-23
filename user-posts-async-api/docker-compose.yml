@@ -1,0 +1,19 @@
+version: "3.5"
+
+networks:
+  social-network:
+    external: 
+      name: network
+    
+services:
+  social-network-api:
+    image: social_network_posts_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7286:7286"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Release"
+    networks:
+       - social-network
