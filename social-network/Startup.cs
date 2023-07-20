@@ -71,11 +71,15 @@ public class Startup
                 }
             });
         });
-        services.AddTransient<IUserService, UserService>();
+        
         services.AddTransient<UserRepository>();
-        services.AddTransient<IPostService, PostService>();
         services.AddTransient<PostRepository>();
         services.AddTransient<FriendRepository>();
+        services.AddTransient<DialogRepository>();
+        
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IPostService, PostService>();
+        services.AddTransient<IDialogService, DialogService>();
         services.AddSingleton<IMessageService, MessageService>();
         
         var config = GetConfiguration();
