@@ -1,7 +1,6 @@
 using dialogs_api.DAL.Models;
-using social_network.DAL.Models;
 
-namespace social_network.Services.Interfaces;
+namespace dialogs_api.Services.Interfaces;
 
 public interface IDialogService
 {

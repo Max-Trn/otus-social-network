@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "social-network", "social-ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "user-posts-async-api", "user-posts-async-api\user-posts-async-api.csproj", "{8202E1B0-ABE1-408C-AE62-7FE58A1BB2D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dialogs-api", "dialogs-api\dialogs-api.csproj", "{F961DFC4-9A5B-4D8A-8E12-7D3C37810112}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,11 @@ Global
 		{8202E1B0-ABE1-408C-AE62-7FE58A1BB2D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8202E1B0-ABE1-408C-AE62-7FE58A1BB2D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8202E1B0-ABE1-408C-AE62-7FE58A1BB2D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F961DFC4-9A5B-4D8A-8E12-7D3C37810112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F961DFC4-9A5B-4D8A-8E12-7D3C37810112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F961DFC4-9A5B-4D8A-8E12-7D3C37810112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F961DFC4-9A5B-4D8A-8E12-7D3C37810112}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

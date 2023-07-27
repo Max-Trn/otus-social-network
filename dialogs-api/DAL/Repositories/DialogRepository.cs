@@ -1,8 +1,8 @@
 using Dapper;
-using social_network.DAL.Infrastructure;
-using social_network.DAL.Models;
+using dialogs_api.DAL.Infrastructure;
+using dialogs_api.DAL.Models;
 
-namespace social_network.DAL.Repositories;
+namespace dialogs_api.DAL.Repositories;
 
 public class DialogRepository
 {

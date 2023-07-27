@@ -1,3 +1,4 @@
+
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -5,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using social_network.Configuration;
 using social_network.DAL.Infrastructure;
 using social_network.DAL.Repositories;
+using social_network.HttpClients.Interfaces;
 using social_network.Services;
 using social_network.Services.Interfaces;
 
@@ -75,12 +77,13 @@ public class Startup
         services.AddTransient<UserRepository>();
         services.AddTransient<PostRepository>();
         services.AddTransient<FriendRepository>();
-        services.AddTransient<DialogRepository>();
         
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IPostService, PostService>();
         services.AddTransient<IDialogService, DialogService>();
         services.AddSingleton<IMessageService, MessageService>();
+        
+        services.AddSingleton<IDialogClient, DialogClient>();
         
         var config = GetConfiguration();
         services.AddSingleton(config);

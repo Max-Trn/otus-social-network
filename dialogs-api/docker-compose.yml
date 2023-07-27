@@ -7,12 +7,12 @@ networks:
 
 services:
   social-network:
-    image: social_network
+    image: dialogs_api
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "7285:7285"
+      - "7289:7289"
     depends_on: 
       - "postgres_image"
     environment:
@@ -23,7 +23,7 @@ services:
   postgres_image:
     image: postgres
     ports:
-      - "5432:5432"
+      - "5437:5437"
     restart: always
     volumes:
       - ./dbscripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
@@ -31,47 +31,37 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "socialnetwork"
+      POSTGRES_DB: "dialogsDb"
     networks: 
       - social-network
-  postgres_image_repl:
+  postgres_shard0:
     image: postgres
     ports:
-      - "5433:5433"
+      - "5435:5435"
     restart: always
     volumes:
-      - ./dbVolumes/pgslave:/var/lib/postgresql/data
+      - ./dbscripts/shard_seed.sql:/docker-entrypoint-initdb.d/shard_seed.sql
+      - ./dbVolumes/pgshard0:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "socialnetwork"
+      POSTGRES_DB: "dialogsDbShard0"
+    command: -p 5435
     networks:
       - social-network
-  postgres_image_repl2:
+  postgres_shard1:
     image: postgres
     ports:
-      - "5434:5434"
+      - "5436:5436"
     restart: always
     volumes:
-      - ./dbVolumes/pgslave2:/var/lib/postgresql/data
+      - ./dbscripts/shard_seed.sql:/docker-entrypoint-initdb.d/shard_seed1.sql
+      - ./dbVolumes/pgshard1:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "socialnetwork"
-    networks:
-      - social-network
-  rabbitmq: # login guest:guest
-    image: rabbitmq:3-management
-    hostname: "rabbitmq"
-    labels:
-      NAME: "rabbitmq"
-    ports:
-      - "4369:4369"
-      - "5671:5671"
-      - "5672:5672"
-      - "25672:25672"
-      - "15671:15671"
-      - "15672:15672"
+      POSTGRES_DB: "dialogsDbShard1"
+    command: -p 5436
     networks:
       - social-network
 
